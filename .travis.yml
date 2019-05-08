@@ -5,4 +5,12 @@ python:
 install:
 - pip install -r requirements.txt
 script: python test.py
-
+deploy:
+  provider: pypi
+  user: wplct
+  password:
+    secure: UWVS9YD4aCI73VlG4w4Hq5+l+cLrbXS3z+4r4tzvGrUgYzBo5W53M0O23Ks5t2aBZ2DOHYy776hrOEzxlU0jBMNNAJS0ZFlnmakA5run8Uy4AelQnB/OQiuoRUCfC5lt4fYkuRyrrnI34JkeNX5R9Q1gLydpwynnNNsKRLlz7BmRSRHUa5ooAXADRwTX/FBIOzopA9odC+eegYGY2w9yvPD8nS7vlpBFKs1mpwjezF7/oElni9OTZ71otF/pP6Wi4pH6eEinarwq1eo3kgRfpJS1PvWHGvv5pNt+d2Ct0N9mUO9K4uB1iqp/hOTTUsGkfKnFhBFUQAxrspYxa1ltGp2xJTP9QNAFRRj3s9py+kUpTEuRDwkKfhYbdHyRQLsK1KJsQ20Er8hG9bjbF/PC4HY+Qa3AlJkONJPqAIhWQhKyOiT5w6+bhglo9WMe4M4wCM9268l23Z4Gn5nAPofZ9MKNM6qQFUQY/5VocA3wAOKjeQAm++QhJzANPd9XxJDh8rCGmygMtNhTXl1TAwBVpRpoAd6RQqnsa+Jd11OyXwimBq3ccdYbJMX3h6Z3jfqo3lUp3w257IQTHRqZZdgahgXuxNd2cXy6HHKlnKQlb+rBxknyY9skIMwZb1s/76JrEOg/w+XbFDEqXOxez2c3L7mROjRUWaQExZbsTi57tig=
+  true:
+    python: 3.7
+    tags: true
+    branch: master
