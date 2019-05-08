@@ -12,7 +12,6 @@ setup(
     classifiers=[
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Build Tools',
-        'License :: Anti-996-License',
         'Programming Language :: Python :: 3.7',
     ],
     keywords='yzs work environment',
