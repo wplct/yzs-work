@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='yzs-work',
@@ -15,5 +15,5 @@ setup(
         'Programming Language :: Python :: 3.7',
     ],
     keywords='yzs work environment',
-    packages=[],
+    packages=find_packages(),
 )
