@@ -5,7 +5,7 @@ python:
 install:
 - pip install -r requirements.txt
 script:
-- cd yzs_test&&python manage.py test
+- cd yzs_test&&python manage.py test&&cd ../
 deploy:
   provider: pypi
   user: wplct
