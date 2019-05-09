@@ -1,4 +1,5 @@
 from django.conf.urls import url
+from django.http import JsonResponse
 from tastypie.resources import ModelResource
 from tastypie.utils import trailing_slash
 import functools
@@ -52,3 +53,11 @@ class BaseModelResource(ModelResource):
                 url(r'^(?P<resource_name>{})/{}{}'.format(self._meta.resource_name, api_url_path, trailing_slash()),
                     self.wrap_view(attr_name), name=api_url_name)
             )
+
+    def prepend_urls(self):
+        return self.prepend_url_list or super().prepend_urls()
+
+    def json_return(self, data=None):
+        if not data:
+            data = {}
+        return JsonResponse(data=data)
