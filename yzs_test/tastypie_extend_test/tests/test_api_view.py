@@ -28,6 +28,7 @@ class ApiViewTestCase(TestCase):
         测试is_api是否有效
         :return:
         """
+
         class UserResource(BaseModelResource):
             class Meta:
                 queryset = User.objects.all()
@@ -49,6 +50,7 @@ class ApiViewTestCase(TestCase):
         测试定制url_name 和 url_path
         :return:
         """
+
         class UserResource(BaseModelResource):
             class Meta:
                 object_class = User
@@ -104,8 +106,9 @@ class ApiViewTestCase(TestCase):
         测试auth选项是否有效
         :return:
         """
+
         class TestAuthentication(Authentication):
-            def is_authenticated(self,request, **kwargs):
+            def is_authenticated(self, request, **kwargs):
                 return False
 
         class UserResource(BaseModelResource):
@@ -121,5 +124,30 @@ class ApiViewTestCase(TestCase):
         user_resource = UserResource()
         self.update_resource(user_resource)
         r = self.client.get('/api/v1/test_auth/a/')
-        self.assertEqual(401,r.status_code)
+        self.assertEqual(401, r.status_code)
 
+    def test_single_api(self):
+        """
+        测试单个对象的api
+        :return:
+        """
+        test_pk = '123456'
+        test_case = self
+
+        class UserResource(BaseModelResource):
+            class Meta:
+                object_class = User
+                resource_name = 'test_single_api'
+                queryset = User.objects.all()
+
+            @api_view(single_api=True)
+            def a(self, request, pk, *args, **kwargs):
+                test_case.assertEqual(test_pk, pk)
+                return self.json_return()
+
+        user_resource = UserResource()
+        self.update_resource(user_resource)
+        r = self.client.get('/api/v1/test_single_api/1/')
+        self.assertEqual(404, r.status_code)
+        r = self.client.get(f'/api/v1/test_single_api/{test_pk}/a/')
+        self.assertEqual(200, r.status_code)
