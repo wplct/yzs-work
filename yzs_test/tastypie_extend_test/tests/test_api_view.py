@@ -55,18 +55,32 @@ class ApiViewTestCase(TestCase):
         self.assertEqual('{}', r.content.decode())
         self.assertEqual('test_url_name', user_resource.prepend_url_list[0].name)
         self.assertEqual('^(?P<resource_name>user_1)/test_url_path/', str(user_resource.prepend_url_list[0].pattern))
-    #
-    # def test_method_check(self):
-    #     class UserResource(BaseModelResource):
-    #         class Meta:
-    #             queryset = User.objects.all()
-    #             resource_name = 'user_2'
-    #
-    #         @api_view(url_name='test_url_name', url_path='test_url_path')
-    #         def a(self):
-    #             return self.json_return()
-    #
-    #     user_resource = UserResource()
-    #     update_resource(self.api,user_resource)
-    #     self.assertEqual('test_url_name', user_resource.prepend_url_list[0].name)
-    #     self.assertEqual('^(?P<resource_name>user)/test_url_path/', str(user_resource.prepend_url_list[0].pattern))
+
+    def _test_method(self, method: str):
+        now_resource_name = f'test_method_check_{method}'
+
+        class UserResource(BaseModelResource):
+            class Meta:
+                object_class = User
+                resource_name = now_resource_name
+
+            @api_view(allowed_methods=[method])
+            def a(self, *args, **kwargs):
+                return self.json_return()
+
+        user_resource = UserResource()
+        self.update_resource(user_resource)
+        r = self.client.get(f'/api/v1/{now_resource_name}/a/')
+        if method == 'get':
+            self.assertEqual(200, r.status_code)
+        else:
+            self.assertEqual(405, r.status_code)
+        r = self.client.post(f'/api/v1/{now_resource_name}/a/')
+        if method == 'post':
+            self.assertEqual(200, r.status_code)
+        else:
+            self.assertEqual(405, r.status_code)
+
+    def test_method_check(self):
+        self._test_method('get')
+        self._test_method('post')

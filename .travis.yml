@@ -9,6 +9,7 @@ script:
 - python manage.py test
 - cd ../
 deploy:
+  skip_existing: true
   provider: pypi
   user: wplct
   password:
