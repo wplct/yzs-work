@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import include
 from tastypie.api import Api
+from tastypie.authentication import Authentication
 
 from yzs.tastypie_extend.base_resource import BaseModelResource, api_view
 from yzs_test.urls import urlpatterns
@@ -23,6 +24,10 @@ class ApiViewTestCase(TestCase):
         urlpatterns.append(url(r'^api/', include(self.api.urls)), )
 
     def test__is_api(self):
+        """
+        测试is_api是否有效
+        :return:
+        """
         class UserResource(BaseModelResource):
             class Meta:
                 queryset = User.objects.all()
@@ -40,10 +45,14 @@ class ApiViewTestCase(TestCase):
         self.assertEqual('^(?P<resource_name>user)/a/', str(user_resource.prepend_url_list[0].pattern))
 
     def test_url_path_and_url_name(self):
+        """
+        测试定制url_name 和 url_path
+        :return:
+        """
         class UserResource(BaseModelResource):
             class Meta:
                 object_class = User
-                resource_name = 'user_1'
+                resource_name = 'test_url_path_and_url_name'
 
             @api_view(url_name='test_url_name', url_path='test_url_path')
             def a(self, *args, **kwargs):
@@ -51,10 +60,11 @@ class ApiViewTestCase(TestCase):
 
         user_resource = UserResource()
         self.update_resource(user_resource)
-        r = self.client.get('/api/v1/user_1/test_url_path/')
+        r = self.client.get('/api/v1/test_url_path_and_url_name/test_url_path/')
         self.assertEqual('{}', r.content.decode())
         self.assertEqual('test_url_name', user_resource.prepend_url_list[0].name)
-        self.assertEqual('^(?P<resource_name>user_1)/test_url_path/', str(user_resource.prepend_url_list[0].pattern))
+        self.assertEqual('^(?P<resource_name>test_url_path_and_url_name)/test_url_path/',
+                         str(user_resource.prepend_url_list[0].pattern))
 
     def _test_method(self, method: str):
         now_resource_name = f'test_method_check_{method}'
@@ -82,5 +92,34 @@ class ApiViewTestCase(TestCase):
             self.assertEqual(405, r.status_code)
 
     def test_method_check(self):
+        """
+        测试allowed_methods是否有效
+        :return:
+        """
         self._test_method('get')
         self._test_method('post')
+
+    def test_auth(self):
+        """
+        测试auth选项是否有效
+        :return:
+        """
+        class TestAuthentication(Authentication):
+            def is_authenticated(self,request, **kwargs):
+                return False
+
+        class UserResource(BaseModelResource):
+            class Meta:
+                object_class = User
+                resource_name = 'test_auth'
+                authentication = TestAuthentication()
+
+            @api_view(auth=True)
+            def a(self, *args, **kwargs):
+                return self.json_return()
+
+        user_resource = UserResource()
+        self.update_resource(user_resource)
+        r = self.client.get('/api/v1/test_auth/a/')
+        self.assertEqual(401,r.status_code)
+
