@@ -5,19 +5,22 @@ from tastypie.utils import trailing_slash
 import functools
 
 
-def api_view(url_path: str = None, url_name: str = None, auth: bool = False, allowed_methods: list = None):
+def api_view(url_path: str = None, url_name: str = None, auth: bool = False, allowed_methods: list = None,
+             single_api: bool = False):
     """
     自动包装一个定制的视图的url映射
     url_path: api视图的backend的最后一个路径的名称, 默认为视图方法名称(替换下划线为横线)
     url_name: api视图对应的url定义中的name, 默认为资源类名称+视图方法名称
     auth: 指定是否需要用户验证
     allowed_methods: 用来制定自定义视图允许的请求方法列表
+    single_api: 该方法是否对单个对象使用
     """
 
     def view_decorator(view_func):
         view_func._is_api = True
         view_func._url_path = url_path
         view_func._url_name = url_name
+        view_func._single_api = single_api
 
         default_allowed_methods = ['get', 'options', 'head']
         final_methods = allowed_methods or default_allowed_methods
@@ -48,11 +51,17 @@ class BaseModelResource(ModelResource):
 
             api_url_path = getattr(attr_value, '_url_path', None) or attr_name
             api_url_name = getattr(attr_value, '_url_name', None) or self._meta.resource_name + '_' + attr_name
-
-            self.prepend_url_list.append(
-                url(r'^(?P<resource_name>{})/{}{}'.format(self._meta.resource_name, api_url_path, trailing_slash()),
-                    self.wrap_view(attr_name), name=api_url_name)
-            )
+            if hasattr(attr_value, '_single_api') and getattr(attr_value, '_single_api') is True:
+                self.prepend_url_list.append(
+                    url(r'^(?P<resource_name>{})/(?P<pk>\w[\w/-]*)/{}{}'.format(self._meta.resource_name, api_url_path,
+                                                                                trailing_slash()),
+                        self.wrap_view(attr_name), name=api_url_name)
+                )
+            else:
+                self.prepend_url_list.append(
+                    url(r'^(?P<resource_name>{})/{}{}'.format(self._meta.resource_name, api_url_path, trailing_slash()),
+                        self.wrap_view(attr_name), name=api_url_name)
+                )
 
     def prepend_urls(self):
         return self.prepend_url_list or super().prepend_urls()
