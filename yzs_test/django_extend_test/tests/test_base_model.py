@@ -14,9 +14,13 @@ class ApiViewTestCase(TestCase):
 
         note = Note()
         note.save()
-
-        self.assertNotIsInstance(note.object_id, uuid.UUID)
+        self.assertIsInstance(note.pk, uuid.UUID)
         self.assertEqual(note.object_id, note.pk)
+        self.assertTrue(note.object_id == note.pk)
+
+        _note = Note.active_objects.filter(pk=note.pk).first()
+        self.assertEqual(_note.pk, note.pk)
+
 
     def test_base_field_priority(self):
         """
@@ -55,6 +59,12 @@ class ApiViewTestCase(TestCase):
         note = Note.objects.first()
         self.assertEqual(note.enabled, False)
         self.assertEqual(0, Note.active_objects.count())
+
+        # 测试强制删除
+
+        note.delete(real_delete=True)
+        self.assertEqual(0, Note.active_objects.count())
+        self.assertEqual(0, Note.objects.count())
 
     def test_base_field_date(self):
         """

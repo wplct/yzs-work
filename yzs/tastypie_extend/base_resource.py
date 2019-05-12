@@ -43,6 +43,10 @@ class BaseModelResource(ModelResource):
         self._handel_api_view()
 
     def _handel_api_view(self):
+        """
+        处理api_view装饰器
+        :return:
+        """
         self.prepend_url_list = []
         for attr_name in (attr_name for attr_name in dir(self) if attr_name not in dir(BaseModelResource)):
             attr_value = getattr(self, attr_name)
@@ -64,6 +68,10 @@ class BaseModelResource(ModelResource):
                 )
 
     def prepend_urls(self):
+        """
+        自动生成prepend_urls
+        :return:
+        """
         return self.prepend_url_list or super().prepend_urls()
 
     def json_return(self, data=None):
