@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from tastypie.resources import ModelResource
 from tastypie.utils import trailing_slash
 import functools
@@ -8,7 +8,7 @@ import functools
 def api_view(url_path: str = None, url_name: str = None, auth: bool = False, allowed_methods: list = None,
              single_api: bool = False):
     """
-    自动包装一个定制的视图的url映射
+    自动包装一个url映射
     url_path: api视图的backend的最后一个路径的名称, 默认为视图方法名称(替换下划线为横线)
     url_name: api视图对应的url定义中的name, 默认为资源类名称+视图方法名称
     auth: 指定是否需要用户验证
@@ -45,7 +45,6 @@ class BaseModelResource(ModelResource):
     def _handel_api_view(self):
         """
         处理api_view装饰器
-        :return:
         """
         self.prepend_url_list = []
         for attr_name in (attr_name for attr_name in dir(self) if attr_name not in dir(BaseModelResource)):
@@ -74,7 +73,8 @@ class BaseModelResource(ModelResource):
         """
         return self.prepend_url_list or super().prepend_urls()
 
-    def json_return(self, data=None):
-        if not data:
-            data = {}
-        return JsonResponse(data=data)
+    def create_response(self, request, data, response_class=HttpResponse, **response_kwargs):
+        if isinstance(data, dict):
+            data['_code'] = 0
+            data['_message'] = ''
+        return super().create_response(request, data, response_class=HttpResponse, **response_kwargs)
