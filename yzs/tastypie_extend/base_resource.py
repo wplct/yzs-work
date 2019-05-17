@@ -4,6 +4,8 @@ from tastypie.resources import ModelResource
 from tastypie.utils import trailing_slash
 import functools
 
+from yzs.tastypie_extend.response_code import resource_code_manage
+
 
 def api_view(url_path: str = None, url_name: str = None, auth: bool = False, allowed_methods: list = None,
              single_api: bool = False):
@@ -38,6 +40,7 @@ def api_view(url_path: str = None, url_name: str = None, auth: bool = False, all
 
 
 class BaseModelResource(ModelResource):
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._handel_api_view()
@@ -73,8 +76,13 @@ class BaseModelResource(ModelResource):
         """
         return self.prepend_url_list or super().prepend_urls()
 
-    def create_response(self, request, data, response_class=HttpResponse, **response_kwargs):
+    def create_response(self, request, code: int = 0, message: str = '', data=None, response_class=HttpResponse,
+                        **response_kwargs):
+        if data is None:
+            data = {}
         if isinstance(data, dict):
-            data['_code'] = 0
-            data['_message'] = ''
+            if '_code' not in data:
+                data['_code'] = code
+            if '_message' not in data:
+                data['_message'] = resource_code_manage.get_message(code)
         return super().create_response(request, data, response_class=HttpResponse, **response_kwargs)
