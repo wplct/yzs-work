@@ -13,14 +13,19 @@ User = get_user_model()
 
 class ApiViewTestCase(TestCase):
     def setUp(self):
+        super().setUp()
         self.api = Api(api_name='v1')
 
-    def update_resource(self, resource):
-        self.api.register(resource)
+    def tearDown(self):
+        self.clear_resource()
+
+    def clear_resource(self):
         for _url in urlpatterns:
-            if _url.pattern == '^api/':
+            if str(_url.pattern) == '^api/':
                 urlpatterns.remove(_url)
-                continue
+
+    def register_resource(self, resource):
+        self.api.register(resource)
         urlpatterns.append(url(r'^api/', include(self.api.urls)), )
 
     def test__is_api(self):
@@ -35,13 +40,13 @@ class ApiViewTestCase(TestCase):
                 resource_name = 'user'
 
             @api_view()
-            def a(self, *args, **kwargs):
-                return self.json_return()
+            def a(self, request, *args, **kwargs):
+                return self.create_response(request)
 
         user_resource = UserResource()
-        self.update_resource(user_resource)
+        self.register_resource(user_resource)
         r = self.client.get('/api/v1/user/a/')
-        self.assertEqual('{}', r.content.decode())
+        self.assertEqual('{"_code": 0, "_message": ""}', r.content.decode())
         self.assertEqual('user_a', user_resource.prepend_url_list[0].name)
         self.assertEqual('^(?P<resource_name>user)/a/', str(user_resource.prepend_url_list[0].pattern))
 
@@ -57,13 +62,13 @@ class ApiViewTestCase(TestCase):
                 resource_name = 'test_url_path_and_url_name'
 
             @api_view(url_name='test_url_name', url_path='test_url_path')
-            def a(self, *args, **kwargs):
-                return self.json_return()
+            def a(self, request, *args, **kwargs):
+                return self.create_response(request)
 
         user_resource = UserResource()
-        self.update_resource(user_resource)
+        self.register_resource(user_resource)
         r = self.client.get('/api/v1/test_url_path_and_url_name/test_url_path/')
-        self.assertEqual('{}', r.content.decode())
+        self.assertEqual('{"_code": 0, "_message": ""}', r.content.decode())
         self.assertEqual('test_url_name', user_resource.prepend_url_list[0].name)
         self.assertEqual('^(?P<resource_name>test_url_path_and_url_name)/test_url_path/',
                          str(user_resource.prepend_url_list[0].pattern))
@@ -77,11 +82,11 @@ class ApiViewTestCase(TestCase):
                 resource_name = now_resource_name
 
             @api_view(allowed_methods=[method])
-            def a(self, *args, **kwargs):
-                return self.json_return()
+            def a(self, request, *args, **kwargs):
+                return self.create_response(request)
 
         user_resource = UserResource()
-        self.update_resource(user_resource)
+        self.register_resource(user_resource)
         r = self.client.get(f'/api/v1/{now_resource_name}/a/')
         if method == 'get':
             self.assertEqual(200, r.status_code)
@@ -118,11 +123,11 @@ class ApiViewTestCase(TestCase):
                 authentication = TestAuthentication()
 
             @api_view(auth=True)
-            def a(self, *args, **kwargs):
-                return self.json_return()
+            def a(self, request, *args, **kwargs):
+                return self.create_response(request, {})
 
         user_resource = UserResource()
-        self.update_resource(user_resource)
+        self.register_resource(user_resource)
         r = self.client.get('/api/v1/test_auth/a/')
         self.assertEqual(401, r.status_code)
 
@@ -143,10 +148,10 @@ class ApiViewTestCase(TestCase):
             @api_view(single_api=True)
             def a(self, request, pk, *args, **kwargs):
                 test_case.assertEqual(test_pk, pk)
-                return self.json_return()
+                return self.create_response(request)
 
         user_resource = UserResource()
-        self.update_resource(user_resource)
+        self.register_resource(user_resource)
         r = self.client.get('/api/v1/test_single_api/1/')
         self.assertEqual(404, r.status_code)
         r = self.client.get(f'/api/v1/test_single_api/{test_pk}/a/')

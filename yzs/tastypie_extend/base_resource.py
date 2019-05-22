@@ -1,14 +1,16 @@
 from django.conf.urls import url
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from tastypie.resources import ModelResource
 from tastypie.utils import trailing_slash
 import functools
+
+from yzs.tastypie_extend.response_code import resource_code_manage
 
 
 def api_view(url_path: str = None, url_name: str = None, auth: bool = False, allowed_methods: list = None,
              single_api: bool = False):
     """
-    自动包装一个定制的视图的url映射
+    自动包装一个url映射
     url_path: api视图的backend的最后一个路径的名称, 默认为视图方法名称(替换下划线为横线)
     url_name: api视图对应的url定义中的name, 默认为资源类名称+视图方法名称
     auth: 指定是否需要用户验证
@@ -38,11 +40,15 @@ def api_view(url_path: str = None, url_name: str = None, auth: bool = False, all
 
 
 class BaseModelResource(ModelResource):
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._handel_api_view()
 
     def _handel_api_view(self):
+        """
+        处理api_view装饰器
+        """
         self.prepend_url_list = []
         for attr_name in (attr_name for attr_name in dir(self) if attr_name not in dir(BaseModelResource)):
             attr_value = getattr(self, attr_name)
@@ -64,9 +70,19 @@ class BaseModelResource(ModelResource):
                 )
 
     def prepend_urls(self):
+        """
+        自动生成prepend_urls
+        :return:
+        """
         return self.prepend_url_list or super().prepend_urls()
 
-    def json_return(self, data=None):
-        if not data:
+    def create_response(self, request, code: int = 0, message: str = '', data=None, response_class=HttpResponse,
+                        **response_kwargs):
+        if data is None:
             data = {}
-        return JsonResponse(data=data)
+        if isinstance(data, dict):
+            if '_code' not in data:
+                data['_code'] = code
+            if '_message' not in data:
+                data['_message'] = resource_code_manage.get_message(code)
+        return super().create_response(request, data, response_class=HttpResponse, **response_kwargs)
