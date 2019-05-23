@@ -1,3 +1,4 @@
+import warnings
 
 from django.test import TestCase
 
@@ -6,6 +7,7 @@ class BaseTestCase(TestCase):
     def setUp(self):
         super().setUp()
         self.api = None
+        warnings.simplefilter('error')
 
     def register_resource(self, resource):
         from yzs_test.urls import urlpatterns
