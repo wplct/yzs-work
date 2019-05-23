@@ -35,7 +35,7 @@ class ResourceCodeManage:
         """
         resource_code = self.map.get(code)
         if not resource_code:
-            if resource_code != 0:
+            if code != 0:
                 warnings.warn('未知错误码', DeprecationWarning)
             return ""
         return resource_code.get_message()
