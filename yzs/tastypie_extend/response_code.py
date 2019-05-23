@@ -13,13 +13,15 @@ class ResourceCodeManage:
     def __init__(self):
         self.map = {}
 
-    def register(self, code: int, resource_code: ResourceCode):
+    def register(self, code: int, resource_code):
         """
         注册错误码对象
         :param code: 错误码
         :param resource_code:
         :return:
         """
+        if isinstance(resource_code, str):
+            resource_code = ResourceCode(resource_code)
         self.map[code] = resource_code
 
     def get_message(self, code):
@@ -36,4 +38,3 @@ class ResourceCodeManage:
 
 
 resource_code_manage = ResourceCodeManage()
-
