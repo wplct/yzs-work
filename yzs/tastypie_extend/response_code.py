@@ -13,7 +13,7 @@ class ResourceCodeManage:
     def __init__(self):
         self.map = {}
 
-    def register(self, code: int, resource_code):
+    def register(self, code: int, resource_code: str or ResourceCode):
         """
         注册错误码对象
         :param code: 错误码
@@ -22,7 +22,10 @@ class ResourceCodeManage:
         """
         if isinstance(resource_code, str):
             resource_code = ResourceCode(resource_code)
+        if code in self.map:
+            warnings.warn('重复错误码', DeprecationWarning)
         self.map[code] = resource_code
+        return code
 
     def get_message(self, code):
         """

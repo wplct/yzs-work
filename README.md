@@ -10,4 +10,4 @@ python + django + [tastypie](https://github.com/django-tastypie/django-tastypie)
 - [x] 自动创建url装饰器
 - [X] 返回错误码
     - [ ] 国际化
-- [ ] Choice
+- [x] Choice

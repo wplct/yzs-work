@@ -35,12 +35,12 @@ class ReturnDataTestCase(BaseTestCase):
         self.assertEqual(data['_message'], 'test')
 
     def test_str_resource_code(self):
-        resource_code_manage.register(10001, 'test')
+        resource_code_manage.register(10002, 'test')
 
         class UserResource(BaseModelResource):
             class Meta:
                 queryset = User.objects.all()
-                resource_name = 'user'
+                resource_name = 'user-2'
 
             @api_view()
             def a(self, request, *args, **kwargs):
@@ -48,14 +48,14 @@ class ReturnDataTestCase(BaseTestCase):
 
             @api_view()
             def b(self, request, *args, **kwargs):
-                return self.create_response(request, code=10001)
+                return self.create_response(request, code=10002)
 
         user_resource = UserResource()
         self.register_resource(user_resource)
         # try:
         with self.assertWarns(DeprecationWarning):
-            self.client.get('/api/v1/user/a/')
+            self.client.get('/api/v1/user-2/a/')
 
-        data = self.client.get('/api/v1/user/b/').json()
-        self.assertEqual(data['_code'], 10001)
+        data = self.client.get('/api/v1/user-2/b/').json()
+        self.assertEqual(data['_code'], 10002)
         self.assertEqual(data['_message'], 'test')
