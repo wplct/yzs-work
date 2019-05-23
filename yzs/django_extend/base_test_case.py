@@ -18,4 +18,13 @@ class BaseTestCase(TestCase):
         if self.api is None:
             self.api = Api(api_name='v1')
         self.api.register(resource)
-        urlpatterns.append(url(r'^api/', include(self.api.urls)), )
+        urlpatterns.append(url(r'^test_api/', include(self.api.urls)), )
+
+    def tearDown(self):
+        from yzs_test.urls import urlpatterns
+        from django.urls import URLResolver
+
+        for url in urlpatterns:
+            assert isinstance(url, URLResolver)
+            if str(url.pattern) == r'^test_api/':
+                urlpatterns.remove(url)
