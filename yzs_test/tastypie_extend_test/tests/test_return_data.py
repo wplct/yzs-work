@@ -27,10 +27,10 @@ class ReturnDataTestCase(BaseTestCase):
         user_resource = UserResource()
         self.register_resource(user_resource)
         # try:
-        with self.assertWarns(DeprecationWarning):
-            self.client.get('/api/v1/user/a/')
+        # with self.assertWarns(DeprecationWarning):
+        self.client.get('/api/v1/user/a/')
 
-        data = self.client.get('/api/v1/user/b/').json()
+        data = self.client.get('/test_api/v1/user/b/').json()
         self.assertEqual(data['_code'], 10001)
         self.assertEqual(data['_message'], 'test')
 
@@ -54,8 +54,7 @@ class ReturnDataTestCase(BaseTestCase):
         self.register_resource(user_resource)
         # try:
         with self.assertWarns(DeprecationWarning):
-            self.client.get('/api/v1/user-2/a/')
-
-        data = self.client.get('/api/v1/user-2/b/').json()
+            self.client.get('/test_api/v1/user-2/a/')
+        data = self.client.get('/test_api/v1/user-2/b/').json()
         self.assertEqual(data['_code'], 10002)
         self.assertEqual(data['_message'], 'test')

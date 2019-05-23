@@ -7,6 +7,14 @@ import functools
 from yzs.tastypie_extend.response_code import resource_code_manage
 
 
+def querydict_to_dict(querydict):
+    data_dict = {}
+    for key in querydict:
+        value = querydict.getlist(key)
+        data_dict[key] = value[0] if len(value) == 1 else value
+    return data_dict
+
+
 def api_view(url_path: str = None, url_name: str = None, auth: bool = False, allowed_methods: list = None,
              single_api: bool = False):
     """
@@ -40,6 +48,9 @@ def api_view(url_path: str = None, url_name: str = None, auth: bool = False, all
 
 
 class BaseModelResource(ModelResource):
+    CONTENT_TYPE_FIELD = 'CONTENT_TYPE'
+    FORM_URLENCODED_CONTENT_TYPE = 'application/x-www-form-urlencoded'
+    MULTIPART_CONTENT_TYPE = 'multipart/form-data'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -86,3 +97,16 @@ class BaseModelResource(ModelResource):
             if '_message' not in data:
                 data['_message'] = resource_code_manage.get_message(code)
         return super().create_response(request, data, response_class=HttpResponse, **response_kwargs)
+
+    def deserialize(self, request, data=None, content_type=None):
+        content_type = content_type or request.META.get(self.CONTENT_TYPE_FIELD, 'application/json')
+
+        if self.FORM_URLENCODED_CONTENT_TYPE in content_type:
+            return querydict_to_dict(request.POST)
+
+        if self.MULTIPART_CONTENT_TYPE in content_type:
+            data = querydict_to_dict(request.POST)
+            data.update(request.FILES)
+            return data
+
+        return super().deserialize(request, data or request.body.decode(), content_type)
