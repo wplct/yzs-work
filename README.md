@@ -16,3 +16,4 @@ python + django + [tastypie](https://github.com/django-tastypie/django-tastypie)
 - [ ] 中国行政区表
     - [ ] 初始化所有地区
 - [ ] admin支持
+    - [ ] 自动生成基础admin
