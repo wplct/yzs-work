@@ -11,3 +11,5 @@ python + django + [tastypie](https://github.com/django-tastypie/django-tastypie)
 - [X] 返回错误码
     - [ ] 国际化
 - [x] Choice
+- [ ] 中国行政区表
+    - [ ] 初始化所有地区
