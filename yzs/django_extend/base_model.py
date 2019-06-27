@@ -29,7 +29,10 @@ class BaseModel(models.Model):
         abstract = True
 
     def __str__(self):
-        return f"<{self.__class__.__name__}:{self.pk}>"
+        name = getattr(self, 'name', '')
+        class_name = self._meta.verbose_name if self._meta.verbose_name else self.__class__.__name__
+
+        return f"<{class_name}:{name+':' if name else ''}{self.pk}>"
 
     def delete(self, using=None, keep_parents=False, real_delete=False):
         """

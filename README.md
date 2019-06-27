@@ -10,6 +10,8 @@ python + django + [tastypie](https://github.com/django-tastypie/django-tastypie)
 - [x] 自动创建url装饰器
 - [X] 返回错误码
     - [ ] 国际化
+- [x] BaseModel
+    - [x] 自动生成\_\_str__
 - [x] Choice
 - [ ] 中国行政区表
     - [ ] 初始化所有地区
