@@ -12,7 +12,7 @@ logger = logging.getLogger('system')
 
 
 def upload_aliyun_oss(folder):
-    if hasattr(settings, 'ALIYUN_OSS'):
+    if not hasattr(settings, 'ALIYUN_OSS'):
         raise Exception('未配置oss')
     AccessKeyId = settings.ALIYUN_OSS["AccessKeyId"]
     AccessKeySecret = settings.ALIYUN_OSS["AccessKeySecret"]
