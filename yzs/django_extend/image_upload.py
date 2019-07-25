@@ -59,3 +59,15 @@ class ImageStorage(FileSystemStorage):
         fn = super(ImageStorage, self)._save(name, content)
         upload_aliyun_oss(fn)
         return fn
+
+
+def get_absolute_url(url):
+    if not url:
+        return url
+    if url.startswith("http://") or url.startswith("https://"):
+        return url
+
+    if settings.UPLOAD_ALIYUN_OSS:
+        return "{}{}".format(settings.IMGHOST, url)
+    else:
+        return "{}{}".format(settings.HOST, url)
