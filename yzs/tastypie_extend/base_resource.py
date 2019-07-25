@@ -1,10 +1,14 @@
 from django.conf.urls import url
+from django.db.models.fields.files import ImageFieldFile, ImageField, FileField, FieldFile
 from django.http import JsonResponse, HttpResponse
 from tastypie.resources import ModelResource
 from tastypie.utils import trailing_slash
 import functools
-
+from django.utils import timezone
+import time
+from yzs.django_extend.image_upload import get_absolute_url
 from yzs.tastypie_extend.response_code import resource_code_manage
+from datetime import datetime, date
 
 
 def querydict_to_dict(querydict):
@@ -47,6 +51,16 @@ def api_view(url_path: str = None, url_name: str = None, auth: bool = False, all
     return view_decorator
 
 
+def dt_to_ts(v):
+    if v:
+        if hasattr(v, "tzinfo") and v.tzinfo is not None and v.tzinfo.utcoffset(v) is not None:
+            v = timezone.localtime(v)
+        return int(time.mktime(v.timetuple()))
+    else:
+        # 如果没有时间返回20180101 00：00
+        return 1514736000
+
+
 class BaseModelResource(ModelResource):
     CONTENT_TYPE_FIELD = 'CONTENT_TYPE'
     FORM_URLENCODED_CONTENT_TYPE = 'application/x-www-form-urlencoded'
@@ -55,6 +69,21 @@ class BaseModelResource(ModelResource):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._handel_api_view()
+
+    def dehydrate(self, bundle):
+        for k, v in bundle.data.iteritems():
+            if type(v) == datetime or type(v) == date:
+                if not v:
+                    bundle.data[k] = dt_to_ts(datetime(2017, 1, 1))
+                else:
+                    bundle.data[k] = dt_to_ts(v)
+            if hasattr(bundle.obj, k) and type(getattr(bundle.obj, k)) in [ImageFieldFile, ImageField, FileField,
+                                                                           FieldFile]:
+                if not v:
+                    bundle.data[k] = ""
+                else:
+                    bundle.data[k] = get_absolute_url(v)
+        return bundle
 
     def _handel_api_view(self):
         """
