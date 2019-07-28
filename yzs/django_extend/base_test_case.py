@@ -1,5 +1,6 @@
 import warnings
 
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 
 
@@ -28,3 +29,8 @@ class BaseTestCase(TestCase):
             assert isinstance(url, URLResolver)
             if str(url.pattern) == r'^test_api/':
                 urlpatterns.remove(url)
+
+    def create_default_user(self):
+        self.username = 'yzs'
+        self.password = '123123123'
+        return get_user_model().objects.create_user(self.username, 'yzs@yzs.cn', self.password)
