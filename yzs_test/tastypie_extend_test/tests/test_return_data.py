@@ -18,11 +18,11 @@ class ReturnDataTestCase(YzsTestCase):
 
             @api_view()
             def a(self, request, *args, **kwargs):
-                return self.create_response(request, code=1001)
+                return self._create_response(request, code=1001)
 
             @api_view()
             def b(self, request, *args, **kwargs):
-                return self.create_response(request, code=10001)
+                return self._create_response(request, code=10001)
 
         user_resource = UserResource()
         self.register_resource(user_resource)
@@ -44,11 +44,11 @@ class ReturnDataTestCase(YzsTestCase):
 
             @api_view()
             def a(self, request, *args, **kwargs):
-                return self.create_response(request, code=1001)
+                return self._create_response(request, code=1001)
 
             @api_view()
             def b(self, request, *args, **kwargs):
-                return self.create_response(request, code=10002)
+                return self._create_response(request, code=10002)
 
         user_resource = UserResource()
         self.register_resource(user_resource)
