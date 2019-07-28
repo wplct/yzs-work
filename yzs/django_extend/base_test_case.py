@@ -33,4 +33,4 @@ class BaseTestCase(TestCase):
     def create_default_user(self):
         self.username = 'yzs'
         self.password = '123123123'
-        return get_user_model().objects.create_user(self.username, 'yzs@yzs.cn', self.password)
+        self.user = get_user_model().objects.create_user(self.username, 'yzs@yzs.cn', self.password)
