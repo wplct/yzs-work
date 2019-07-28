@@ -71,7 +71,7 @@ class BaseModelResource(ModelResource):
         self._handel_api_view()
 
     def dehydrate(self, bundle):
-        for k, v in bundle.data.iteritems():
+        for k, v in bundle.data.items():
             if type(v) == datetime or type(v) == date:
                 if not v:
                     bundle.data[k] = dt_to_ts(datetime(2017, 1, 1))
