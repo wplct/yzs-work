@@ -1,13 +1,13 @@
 from django.contrib.auth import get_user_model
 
-from yzs.django_extend.base_test_case import BaseTestCase
+from yzs.django_extend.base_test_case import BaseTestCase, YzsTestCase
 from yzs.tastypie_extend.base_resource import BaseModelResource, api_view
 from yzs.tastypie_extend.response_code import resource_code_manage, ResourceCode
 
 User = get_user_model()
 
 
-class ReturnDataTestCase(BaseTestCase):
+class ReturnDataTestCase(YzsTestCase):
     def test_resource_code(self):
         resource_code_manage.register(10001, ResourceCode('test'))
 

@@ -10,6 +10,13 @@ class BaseTestCase(TestCase):
         self.api = None
         warnings.simplefilter('error')
 
+    def create_default_user(self):
+        self.username = 'yzs'
+        self.password = '123123123'
+        self.user = get_user_model().objects.create_user(self.username, 'yzs@yzs.cn', self.password)
+
+
+class YzsTestCase(BaseTestCase):
     def register_resource(self, resource):
         from yzs_test.urls import urlpatterns
         from django.conf.urls import url
@@ -29,8 +36,3 @@ class BaseTestCase(TestCase):
             assert isinstance(url, URLResolver)
             if str(url.pattern) == r'^test_api/':
                 urlpatterns.remove(url)
-
-    def create_default_user(self):
-        self.username = 'yzs'
-        self.password = '123123123'
-        self.user = get_user_model().objects.create_user(self.username, 'yzs@yzs.cn', self.password)

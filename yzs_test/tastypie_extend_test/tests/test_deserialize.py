@@ -3,11 +3,12 @@ import json
 from django.contrib.auth import get_user_model
 
 from yzs import BaseTestCase, BaseModelResource, api_view
+from yzs.django_extend.base_test_case import YzsTestCase
 
 User = get_user_model()
 
 
-class DeserializeTest(BaseTestCase):
+class DeserializeTest(YzsTestCase):
     def test_deserialize(self):
         post_data = {
             'name': '中文测试数据'
