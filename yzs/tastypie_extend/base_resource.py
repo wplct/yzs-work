@@ -116,7 +116,7 @@ class BaseModelResource(ModelResource):
         """
         return self.prepend_url_list or super().prepend_urls()
 
-    def create_response(self, request, code: int = 0, message: str = '', data=None, response_class=HttpResponse,
+    def _create_response(self, request, code: int = 0, message: str = '', data=None, response_class=HttpResponse,
                         **response_kwargs):
         if data is None:
             data = {}
