@@ -41,7 +41,7 @@ class ApiViewTestCase(TestCase):
 
             @api_view()
             def a(self, request, *args, **kwargs):
-                return self._create_response(request)
+                return self.create_response(request)
 
         user_resource = UserResource()
         self.register_resource(user_resource)
@@ -63,7 +63,7 @@ class ApiViewTestCase(TestCase):
 
             @api_view(url_name='test_url_name', url_path='test_url_path')
             def a(self, request, *args, **kwargs):
-                return self._create_response(request)
+                return self.create_response(request)
 
         user_resource = UserResource()
         self.register_resource(user_resource)
@@ -83,7 +83,7 @@ class ApiViewTestCase(TestCase):
 
             @api_view(allowed_methods=[method])
             def a(self, request, *args, **kwargs):
-                return self._create_response(request)
+                return self.create_response(request)
 
         user_resource = UserResource()
         self.register_resource(user_resource)
@@ -124,7 +124,7 @@ class ApiViewTestCase(TestCase):
 
             @api_view(auth=True)
             def a(self, request, *args, **kwargs):
-                return self._create_response(request, {})
+                return self.create_response(request, {})
 
         user_resource = UserResource()
         self.register_resource(user_resource)
@@ -148,7 +148,7 @@ class ApiViewTestCase(TestCase):
             @api_view(single_api=True)
             def a(self, request, pk, *args, **kwargs):
                 test_case.assertEqual(test_pk, pk)
-                return self._create_response(request)
+                return self.create_response(request)
 
         user_resource = UserResource()
         self.register_resource(user_resource)
