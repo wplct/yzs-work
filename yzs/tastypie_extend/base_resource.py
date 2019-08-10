@@ -117,16 +117,23 @@ class BaseModelResource(ModelResource):
         """
         return self.prepend_url_list or super().prepend_urls()
 
-    def create_response(self, request, data=None, code: int = 0, message: str = '', response_class=HttpResponse,
-                        **response_kwargs):
+    def create_response(self, request, data=None, response_class=HttpResponse, **response_kwargs):
+
         if data is None:
             data = {}
         if isinstance(data, dict):
+            code = 0
+
+            if 'code' in response_kwargs:
+                code = response_kwargs['code']
+                del response_kwargs['code']
             if '_code' not in data:
                 data['_code'] = code
             if '_message' not in data:
                 data['_message'] = resource_code_manage.get_message(code)
-        return super().create_response(request, data, response_class=HttpResponse, **response_kwargs)
+
+
+        return super().create_response(request, data, **response_kwargs)
 
     def _deserialize(self, request, data=None, content_type=None):
         content_type = content_type or request.META.get(self.CONTENT_TYPE_FIELD, 'application/json')
