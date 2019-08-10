@@ -84,6 +84,9 @@ class BaseModelResource(ModelResource):
                     bundle.data[k] = ""
                 else:
                     bundle.data[k] = get_absolute_url(v)
+        if '_code' not in bundle.data:
+            bundle.data['_code'] = 0
+            bundle.data['_message'] = ''
         return bundle
 
     def _handel_api_view(self):
