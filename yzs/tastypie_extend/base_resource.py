@@ -41,6 +41,7 @@ def api_view(url_path: str = None, url_name: str = None, auth: bool = False, all
 
         @functools.wraps(view_func)
         def view_wrapper(self, request, *args, **kwargs):
+            request._load_post_and_files()
             if auth:
                 self.is_authenticated(request)
             self.method_check(request, final_methods)
