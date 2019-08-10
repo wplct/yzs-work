@@ -21,7 +21,7 @@ class DeserializeTest(YzsTestCase):
 
             @api_view(allowed_methods=['post'])
             def a(self, request, *args, **kwargs):
-                test_case.assertEqual(post_data,self.deserialize(request))
+                test_case.assertEqual(post_data,self._deserialize(request))
                 return self._create_response(request)
 
         user_resource = UserResource()

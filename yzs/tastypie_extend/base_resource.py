@@ -127,7 +127,7 @@ class BaseModelResource(ModelResource):
                 data['_message'] = resource_code_manage.get_message(code)
         return super().create_response(request, data, response_class=HttpResponse, **response_kwargs)
 
-    def deserialize(self, request, data=None, content_type=None):
+    def _deserialize(self, request, data=None, content_type=None):
         content_type = content_type or request.META.get(self.CONTENT_TYPE_FIELD, 'application/json')
 
         if self.FORM_URLENCODED_CONTENT_TYPE in content_type:
