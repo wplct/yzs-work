@@ -1,6 +1,7 @@
 from django.conf.urls import url
 from django.db.models.fields.files import ImageFieldFile, ImageField, FileField, FieldFile
 from django.http import JsonResponse, HttpResponse
+from tastypie.exceptions import ImmediateHttpResponse
 from tastypie.resources import ModelResource
 from tastypie.utils import trailing_slash
 import functools
@@ -9,6 +10,7 @@ import time
 from yzs.django_extend.image_upload import get_absolute_url
 from yzs.tastypie_extend.response_code import resource_code_manage
 from datetime import datetime, date
+from django.conf import settings
 
 
 def querydict_to_dict(querydict):
@@ -41,11 +43,18 @@ def api_view(url_path: str = None, url_name: str = None, auth: bool = False, all
 
         @functools.wraps(view_func)
         def view_wrapper(self, request, *args, **kwargs):
-            request._load_post_and_files()
-            if auth:
-                self.is_authenticated(request)
-            self.method_check(request, final_methods)
-            return view_func(self, request, *args, **kwargs)
+            try:
+                request._load_post_and_files()
+                if auth:
+                    self.is_authenticated(request)
+                self.method_check(request, final_methods)
+                return view_func(self, request, *args, **kwargs)
+            except Exception as e:
+                if settings.DEBUG:
+                    print(e)
+                    print('post_data:', self._deserialize(request))
+                    print('GET:', request.GET)
+                raise e
 
         return view_wrapper
 
@@ -134,7 +143,6 @@ class BaseModelResource(ModelResource):
                 data['_code'] = code
             if '_message' not in data:
                 data['_message'] = resource_code_manage.get_message(code)
-
 
         return super().create_response(request, data, **response_kwargs)
 
