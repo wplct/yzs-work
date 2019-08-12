@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='yzs-work',
-    version='0.1.27',
+    version='0.1.28',
     description='yzs work environment',
     url='https://github.com/wplct/yzs-work',
     author='wplct',

@@ -21,6 +21,12 @@ def querydict_to_dict(querydict):
     return data_dict
 
 
+class CodeException(Exception):
+    def __init__(self, code=0, data=None, *args, **kwargs):
+        self.code = code
+        self.data = data
+
+
 def api_view(url_path: str = None, url_name: str = None, auth: bool = False, allowed_methods: list = None,
              single_api: bool = False):
     """
@@ -49,6 +55,8 @@ def api_view(url_path: str = None, url_name: str = None, auth: bool = False, all
                     self.is_authenticated(request)
                 self.method_check(request, final_methods)
                 return view_func(self, request, *args, **kwargs)
+            except CodeException as e:
+                return self.create_response(request, data=e.data, code=e.code)
             except Exception as e:
                 if settings.DEBUG:
                     print(e)
