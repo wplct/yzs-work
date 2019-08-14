@@ -1,6 +1,7 @@
 from django.conf.urls import url
 from django.db.models.fields.files import ImageFieldFile, ImageField, FileField, FieldFile
 from django.http import JsonResponse, HttpResponse
+from tastypie.bundle import Bundle
 from tastypie.exceptions import ImmediateHttpResponse
 from tastypie.resources import ModelResource
 from tastypie.utils import trailing_slash
@@ -101,9 +102,6 @@ class BaseModelResource(ModelResource):
                     bundle.data[k] = ""
                 else:
                     bundle.data[k] = get_absolute_url(v)
-        if '_code' not in bundle.data:
-            bundle.data['_code'] = 0
-            bundle.data['_message'] = ''
         return bundle
 
     def _handel_api_view(self):
@@ -142,17 +140,21 @@ class BaseModelResource(ModelResource):
         if data is None:
             data = {}
         if isinstance(data, dict):
-            code = 0
-
-            if 'code' in response_kwargs:
-                code = response_kwargs['code']
-                del response_kwargs['code']
-            if '_code' not in data:
-                data['_code'] = code
-            if '_message' not in data:
-                data['_message'] = resource_code_manage.get_message(code)
+            self.handel_code(data, response_kwargs)
+        if isinstance(data, Bundle):
+            self.handel_code(data.data, response_kwargs)
 
         return super().create_response(request, data, **response_kwargs)
+
+    def handel_code(self, data, response_kwargs):
+        code = 0
+        if 'code' in response_kwargs:
+            code = response_kwargs['code']
+            del response_kwargs['code']
+        if '_code' not in data:
+            data['_code'] = code
+        if '_message' not in data:
+            data['_message'] = resource_code_manage.get_message(code)
 
     def _deserialize(self, request, data=None, content_type=None):
         content_type = content_type or request.META.get(self.CONTENT_TYPE_FIELD, 'application/json')

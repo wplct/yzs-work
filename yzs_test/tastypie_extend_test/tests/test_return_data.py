@@ -34,6 +34,17 @@ class ReturnDataTestCase(YzsTestCase):
         self.assertEqual(data['_code'], 10001)
         self.assertEqual(data['_message'], 'test')
 
+        data = self.client.get('/test_api/v1/user/').json()
+        self.assertEqual(data['_code'], 0)
+        self.assertEqual(data['_message'], '')
+
+        u = User()
+        u.save()
+
+        data = self.client.get(f'/test_api/v1/user/{u.pk}/').json()
+        self.assertEqual(data['_code'], 0)
+        self.assertEqual(data['_message'], '')
+
     def test_str_resource_code(self):
         resource_code_manage.register(10002, 'test')
 
