@@ -1,4 +1,4 @@
-django
+django==2.2.1
 django-tastypie
 oss2
 six

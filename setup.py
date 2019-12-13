@@ -15,7 +15,7 @@ setup(
         'Programming Language :: Python :: 3.7',
     ],
     install_requires=[
-        'Django',
+        'Django==2.2.1',
         'django-tastypie',
         'requests'
     ],
