@@ -17,3 +17,6 @@ python + django + [tastypie](https://github.com/django-tastypie/django-tastypie)
     - [ ] 初始化所有地区
 - [ ] admin支持
     - [ ] 自动生成基础admin
+- [ ] 自带django模板
+    - [ ] docker相关
+    - [ ] django默认设置
