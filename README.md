@@ -20,3 +20,4 @@ python + django + [tastypie](https://github.com/django-tastypie/django-tastypie)
 - [ ] 自带django模板
     - [ ] docker相关
     - [ ] django默认设置
+- [ ] 设置oss为非必须依赖
