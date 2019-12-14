@@ -1,7 +1,7 @@
 # coding: utf-8
 import uuid
 
-import oss2
+
 import os, time
 from django.conf import settings
 import logging
@@ -12,8 +12,10 @@ logger = logging.getLogger('system')
 
 
 def upload_aliyun_oss(folder):
+    import oss2
+
     if not hasattr(settings, 'ALIYUN_OSS'):
-        raise Exception('未配置oss')
+        return
     AccessKeyId = settings.ALIYUN_OSS["AccessKeyId"]
     AccessKeySecret = settings.ALIYUN_OSS["AccessKeySecret"]
     Endpoint = settings.ALIYUN_OSS["Endpoint"]
