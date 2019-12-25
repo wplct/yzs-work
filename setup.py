@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='yzs-work',
-    version='0.1.32',
+    version='0.1.33',
     description='yzs work environment',
     url='https://github.com/wplct/yzs-work',
     author='wplct',
@@ -15,7 +15,7 @@ setup(
         'Programming Language :: Python :: 3.7',
     ],
     install_requires=[
-        'Django==2.2.1',
+        'Django',
         'django-tastypie',
         'requests'
     ],
