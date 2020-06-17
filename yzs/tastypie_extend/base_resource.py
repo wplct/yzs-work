@@ -60,9 +60,12 @@ def api_view(url_path: str = None, url_name: str = None, auth: bool = False, all
                 return self.create_response(request, data=e.data, code=e.code)
             except Exception as e:
                 if settings.DEBUG:
-                    print(e)
-                    print('post_data:', self._deserialize(request))
-                    print('GET:', request.GET)
+                    try:
+                        print(e)
+                        print('post_data:', self._deserialize(request))
+                        print('GET:', request.GET)
+                    except:
+                        pass
                 raise e
 
         return view_wrapper
