@@ -178,3 +178,22 @@ class BaseModelResource(ModelResource):
             return data
 
         return super().deserialize(request, data or request.body.decode(), content_type)
+
+    @classmethod
+    def get_fields(cls, fields=None, excludes=None):
+        final_fields = super().get_fields(fields, excludes)
+        if hasattr(cls._meta, 'read_only_field'):
+            for k, v in final_fields.items():
+                if k in cls._meta.read_only_field:
+                    v.readonly = True
+        return final_fields
+
+    @classmethod
+    def get_obj_and_check(cls, pk, find_class=None):
+        if find_class is None:
+            obj = cls._meta.queryset.filter(object_id=pk).first()
+        else:
+            obj = find_class.active_objects.filter(object_id=pk).first()
+        if not obj:
+            raise CodeException(code=4004)
+        return obj
