@@ -21,3 +21,5 @@ python + django + [tastypie](https://github.com/django-tastypie/django-tastypie)
     - [ ] docker相关
     - [ ] django默认设置
 - [x] 设置oss为非必须依赖
+- [ ] django 
+    - [ ] 自动生成

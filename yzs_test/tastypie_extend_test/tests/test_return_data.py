@@ -11,10 +11,10 @@ class ReturnDataTestCase(YzsTestCase):
     def test_resource_code(self):
         resource_code_manage.register(10001, ResourceCode('test'))
 
-        class UserResource(BaseModelResource):
+        class TestResourceCodeResource(BaseModelResource):
             class Meta:
                 queryset = User.objects.all()
-                resource_name = 'user'
+                resource_name = 'test_resource_code'
 
             @api_view()
             def a(self, request, *args, **kwargs):
@@ -24,24 +24,24 @@ class ReturnDataTestCase(YzsTestCase):
             def b(self, request, *args, **kwargs):
                 return self.create_response(request, code=10001)
 
-        user_resource = UserResource()
-        self.register_resource(user_resource)
+        resource = TestResourceCodeResource()
+        self.register_resource(resource)
         # try:
         # with self.assertWarns(DeprecationWarning):
-        self.client.get('/api/v1/user/a/')
+        self.client.get('/api/v1/test_resource_code/a/')
 
-        data = self.client.get('/test_api/v1/user/b/').json()
+        data = self.client.get('/test_api/v1/test_resource_code/b/').json()
         self.assertEqual(data['_code'], 10001)
         self.assertEqual(data['_message'], 'test')
 
-        data = self.client.get('/test_api/v1/user/').json()
+        data = self.client.get('/test_api/v1/test_resource_code/').json()
         self.assertEqual(data['_code'], 0)
         self.assertEqual(data['_message'], '')
 
         u = User()
         u.save()
 
-        data = self.client.get(f'/test_api/v1/user/{u.pk}/').json()
+        data = self.client.get(f'/test_api/v1/test_resource_code/{u.pk}/').json()
         self.assertEqual(data['_code'], 0)
         self.assertEqual(data['_message'], '')
 

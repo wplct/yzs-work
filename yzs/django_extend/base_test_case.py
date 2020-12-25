@@ -36,3 +36,5 @@ class YzsTestCase(BaseTestCase):
             assert isinstance(url, URLResolver)
             if str(url.pattern) == r'^test_api/':
                 urlpatterns.remove(url)
+        self.api = None
+

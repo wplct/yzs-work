@@ -107,6 +107,13 @@ class BaseModelResource(ModelResource):
                     bundle.data[k] = get_absolute_url(v)
         return bundle
 
+    def hydrate(self,bundle):
+        # 实现只读列表
+        for k, v in bundle.data.items():
+            if k in self._meta.read_only_field:
+                del bundle.data[k]
+        return bundle
+
     def _handel_api_view(self):
         """
         处理api_view装饰器
