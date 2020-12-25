@@ -136,7 +136,7 @@ class ApiViewTestCase(TestCase):
         测试单个对象的api
         :return:
         """
-        test_pk = '123456'
+        test_pk = 'e7f7d55a-4c45-4c45-a0b4-6724435168d7'
         test_case = self
 
         class UserResource(BaseModelResource):
@@ -152,7 +152,8 @@ class ApiViewTestCase(TestCase):
 
         user_resource = UserResource()
         self.register_resource(user_resource)
-        r = self.client.get('/api/v1/test_single_api/1/')
+        r = self.client.get('/api/v1/test_single_api/67ed3642-7b63-4f84-80b0-6cbdafac7253/')
+
         self.assertEqual(404, r.status_code)
         r = self.client.get(f'/api/v1/test_single_api/{test_pk}/a/')
         self.assertEqual(200, r.status_code)

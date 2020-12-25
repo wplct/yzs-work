@@ -1,6 +1,7 @@
 from django.conf.urls import url
 from django.db.models.fields.files import ImageFieldFile, ImageField, FileField, FieldFile
 from django.http import JsonResponse, HttpResponse
+from tastypie import fields
 from tastypie.bundle import Bundle
 from tastypie.exceptions import ImmediateHttpResponse
 from tastypie.resources import ModelResource
@@ -88,6 +89,13 @@ class BaseModelResource(ModelResource):
     FORM_URLENCODED_CONTENT_TYPE = 'application/x-www-form-urlencoded'
     MULTIPART_CONTENT_TYPE = 'multipart/form-data'
 
+    object_id = fields.CharField(attribute='object_id', readonly=True)
+    priority = fields.IntegerField(attribute='priority', readonly=True)
+    enabled = fields.BooleanField(attribute='enabled', readonly=True)
+
+    created_at = fields.DateTimeField(attribute='created_at', readonly=True)
+    updated_at = fields.DateTimeField(attribute='updated_at', readonly=True)
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._handel_api_view()
@@ -107,7 +115,7 @@ class BaseModelResource(ModelResource):
                     bundle.data[k] = get_absolute_url(v)
         return bundle
 
-    def hydrate(self,bundle):
+    def hydrate(self, bundle):
         # 实现只读列表
         for k, v in bundle.data.items():
             if k in self._meta.read_only_field:
@@ -181,6 +189,9 @@ class BaseModelResource(ModelResource):
 
     @classmethod
     def get_fields(cls, fields=None, excludes=None):
+        """
+        只读
+        """
         final_fields = super().get_fields(fields, excludes)
         if hasattr(cls._meta, 'read_only_field'):
             for k, v in final_fields.items():
